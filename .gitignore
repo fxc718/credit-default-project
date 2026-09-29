@@ -1,0 +1,30 @@
+# Python编译缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyCharm IDE配置
+.idea/
+*.iml
+inspectionProfiles/
+
+# 数据集
+data/*.csv
+data/*.parquet
+data/*.xlsx
+
+# 模型文件
+*.pkl
+*.joblib
+*.pickle
+
+# 输出文件
+output/*
+
+# 虚拟环境
+venv/
+env/
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
