@@ -3,23 +3,46 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+<<<<<<< HEAD
 # PyCharm IDE配置
 .idea/
 *.iml
 inspectionProfiles/
 
 # 数据集
+=======
+# PyCharm IDE配置（.idea文件夹）
+.idea/
+*.iml
+misc.xml
+modules.xml
+vcs.xml
+inspectionProfiles/
+
+# 数据集、原始csv
+>>>>>>> e0067179d4f54cf9f1481105185149d7170fc5b5
 data/*.csv
 data/*.parquet
 data/*.xlsx
 
+<<<<<<< HEAD
 # 模型文件
+=======
+# 模型文件pkl、joblib
+>>>>>>> e0067179d4f54cf9f1481105185149d7170fc5b5
 *.pkl
 *.joblib
 *.pickle
 
+<<<<<<< HEAD
 # 输出文件
 output/*
+=======
+# 输出图片、结果
+output/*.png
+output/*.jpg
+output/*.pdf
+>>>>>>> e0067179d4f54cf9f1481105185149d7170fc5b5
 
 # 虚拟环境
 venv/
@@ -27,4 +50,8 @@ env/
 
 # 系统垃圾
 .DS_Store
+<<<<<<< HEAD
 Thumbs.db
+=======
+Thumbs.db
+>>>>>>> e0067179d4f54cf9f1481105185149d7170fc5b5

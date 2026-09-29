@@ -1,9 +1,0 @@
-feature,importance
-NumberOfTimes90DaysLate,0.39803392
-RevolvingUtilizationOfUnsecuredLines,0.28186283
-NumberOfTime30-59DaysPastDueNotWorse,0.13296041
-NumberOfTime60-89DaysPastDueNotWorse,0.11166419
-NumberOfOpenCreditLinesAndLoans,0.023163173
-age,0.021279637
-DebtRatio,0.016830059
-MonthlyIncome,0.01420582
