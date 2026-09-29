@@ -36,5 +36,12 @@
 - 特征重要性：**90天逾期次数**是预测违约最重要特征，其次为循环信贷使用率，结果符合信贷业务常识
 
 ## 环境依赖
-```bash
+安装所需python库：
 pip install -r requirements.txt
+
+## 复现说明
+1. 从Kaggle下载数据集，放置到data文件夹
+2. 按顺序运行脚本：
+01_eda_analysis.py → 02_data_clean.py → 03_woe_iv_feature.py → 04_model_train.py → 05_model_evaluate.py
+3. 运行完成后，输出结果会保存在output文件夹，模型保存在eda文件夹。
+> 数据集、模型、可视化图片不会提交到Git仓库。
