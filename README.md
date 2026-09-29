@@ -12,17 +12,17 @@
 原始csv文件不上传仓库，下载后放置在data/文件夹下即可复现。
 
 ## 项目目录结构
-eda/：探索性数据分析与建模脚本
-01_eda_analysis.py：EDA探索性分析，标签分布、缺失值、异常值统计
-02_data_clean.py：数据清洗，异常值剔除、缺失值填充
-03_woe_iv_feature.py：WOE分箱、IV计算，完成特征筛选
-04_model_train.py：逻辑回归、XGBoost模型训练，保存模型文件
-05_model_evaluate.py：模型评估，计算AUC、KS、PSI特征稳定性、特征重要性
+- eda/：探索性数据分析与建模脚本
+  - 01_eda_analysis.py：EDA探索性分析，标签分布、缺失值、异常值统计
+  - 02_data_clean.py：数据清洗，异常值剔除、缺失值填充
+  - 03_woe_iv_feature.py：WOE分箱、IV计算，完成特征筛选
+  - 04_model_train.py：逻辑回归、XGBoost模型训练，保存模型文件
+  - 05_model_evaluate.py：模型评估，计算AUC、KS、PSI特征稳定性、特征重要性
 
-data/：数据集存放目录（原始数据不上传git）
-output/：输出结果，包含指标csv（本地运行生成，图片、模型文件不上传git）
-requirements.txt：项目依赖包清单
-.gitignore：git忽略配置文件
+- data/：数据集存放目录（原始数据不上传git）
+- output/：输出结果，包含指标csv（本地运行生成，图片、模型文件不上传git）
+- requirements.txt：项目依赖包清单
+- .gitignore：git忽略配置文件
 
 ## 建模流程
 ### EDA
