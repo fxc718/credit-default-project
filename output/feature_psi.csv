@@ -1,0 +1,9 @@
+feature,PSI
+RevolvingUtilizationOfUnsecuredLines,0.000412377002584807
+NumberOfTimes90DaysLate,0.0
+NumberOfTime30-59DaysPastDueNotWorse,7.468342894902281e-07
+NumberOfTime60-89DaysPastDueNotWorse,0.0
+age,0.00021984188676213708
+DebtRatio,0.00035635681377768245
+NumberOfOpenCreditLinesAndLoans,0.00037007014618759286
+MonthlyIncome,9.506230916557669e-05
