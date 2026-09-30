@@ -34,15 +34,11 @@ data/*.xlsx
 *.joblib
 *.pickle
 
-<<<<<<< HEAD
-# 输出文件
-output/*
-=======
-# 输出图片、结果
-output/*.png
-output/*.jpg
-output/*.pdf
->>>>>>> e0067179d4f54cf9f1481105185149d7170fc5b5
+# output文件夹保留，允许图片上传
+output/*.csv
+output/*.xlsx
+output/*.parquet
+
 
 # 虚拟环境
 venv/
