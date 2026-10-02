@@ -1,7 +1,5 @@
 # src/04_model_train.py
 # 信贷风控项目：逻辑回归 + XGBoost 模型训练与评估
-#
-#
 # 1. 直接读取 03 脚本产出的 WOE 编码数据集 (train_woe.csv / test_woe.csv)，避免重复切分导致数据不一致
 # 2. WOE 特征已无量纲，逻辑回归无需再做 StandardScaler
 # 3. 同时训练 LR 与 XGBoost 做对比，体现"可解释性 vs 预测能力"的业务权衡
@@ -114,7 +112,7 @@ if __name__ == "__main__":
     result_df = pd.DataFrame(results)
     print(result_df.to_string(index=False))
 
-    result_df.to_csv("../output/model_comparison.csv", index=False)
+    result_df.to_csv("../output/model_comparison.csv", index=False,encoding='utf-8-sig')
     print("\n模型对比结果已保存到 output/model_comparison.csv")
 
 
