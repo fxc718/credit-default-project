@@ -1,105 +1,121 @@
 # src/04_model_train.py
-# 信贷违约预测：逻辑回归(评分卡) + XGBoost，AUC/KS评估
-# 特征：按 IV>=0.02 从 iv_result.csv 筛选的8个有效特征
+# 信贷风控项目：逻辑回归 + XGBoost 模型训练与评估
+#
+#
+# 1. 直接读取 03 脚本产出的 WOE 编码数据集 (train_woe.csv / test_woe.csv)，避免重复切分导致数据不一致
+# 2. WOE 特征已无量纲，逻辑回归无需再做 StandardScaler
+# 3. 同时训练 LR 与 XGBoost 做对比，体现"可解释性 vs 预测能力"的业务权衡
+# 4. 输出 AUC、KS、混淆矩阵，KS 是风控业务更看重的指标
+# 5. 模型统一保存到 models/ 目录，供 05_evaluate.py 和 06_predict.py 加载
+
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+import joblib
+import os
+import warnings
+
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_auc_score, roc_curve, confusion_matrix
+from sklearn.metrics import roc_auc_score, confusion_matrix, roc_curve
 import xgboost as xgb
 
 
-def calc_ks(y_true, y_pred_proba):
-    """KS指标：衡量好坏样本分布的最大区分度"""
-    fpr, tpr, _ = roc_curve(y_true, y_pred_proba)
-    return np.max(tpr - fpr)
+
+def calc_ks(y_true, y_prob):
+    """
+    计算 KS 值 (风控核心指标)
+    KS = max(TPR - FPR)，反映模型区分好坏样本的最大能力
+    经验值：KS > 0.3 合格，KS > 0.4 优秀
+    """
+    fpr, tpr, _ = roc_curve(y_true, y_prob)
+    return max(tpr - fpr)
+
+
+def evaluate_model(model_name, y_true, y_prob, threshold=0.5):
+    """
+    统一评估函数，输出 AUC、KS、混淆矩阵
+    """
+    auc = roc_auc_score(y_true, y_prob)
+    ks = calc_ks(y_true, y_prob)
+    cm = confusion_matrix(y_true, y_prob > threshold)
+
+    print(f"\n===== {model_name} 评估结果 =====")
+    print(f"AUC: {auc:.4f}")
+    print(f"KS : {ks:.4f}")
+    print(f"混淆矩阵 (阈值={threshold}):")
+    print(cm)
+
+    return {"model": model_name, "auc": auc, "ks": ks}
+
 
 if __name__ == "__main__":
-    # 读取清洗后的数据
-    df = pd.read_csv("../data/clean_data.csv")
+    # 确保 models 目录存在
+    os.makedirs("../models", exist_ok=True)
+
+    # 1. 读取 03 脚本产出的 WOE 编码数据集
+    print("正在读取 WOE 编码后的数据...")
+    train_df = pd.read_csv("../data/train_woe.csv")
+    test_df = pd.read_csv("../data/test_woe.csv")
+
     target = "SeriousDlqin2yrs"
+    features = [col for col in train_df.columns if col != target]
 
-    # ===== IV>=0.02 筛选后的8个有效特征 =====
-    feature_selected = [
-        "RevolvingUtilizationOfUnsecuredLines",      # IV=1.06
-        "NumberOfTimes90DaysLate",                   # IV=0.83
-        "NumberOfTime30-59DaysPastDueNotWorse",      # IV=0.70
-        "NumberOfTime60-89DaysPastDueNotWorse",      # IV=0.55
-        "age",                                        # IV=0.25
-        "DebtRatio",                                  # IV=0.059
-        "NumberOfOpenCreditLinesAndLoans",            # IV=0.048
-        "MonthlyIncome",                              # IV=0.040
-    ]
+    X_train, y_train = train_df[features], train_df[target]
+    X_test, y_test = test_df[features], test_df[target]
 
-    X = df[feature_selected]
-    y = df[target]
+    print(f"训练集: {X_train.shape}, 测试集: {X_test.shape}")
+    print(f"训练集违约率: {y_train.mean():.4f}, 测试集违约率: {y_test.mean():.4f}")
 
-    # 划分训练/测试集：stratify分层保证正负样本比例一致
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
+    results = []
+
+    # =====================================================
+    # 模型 1：逻辑回归 (评分卡模型)
+    # WOE 编码后特征已是无量纲，无需 StandardScaler，系数即可解释
+    # =====================================================
+    print("\n===== 训练逻辑回归模型 (评分卡) =====")
+    lr = LogisticRegression(
+        max_iter=500,
+        random_state=42,
+        class_weight="balanced"  # 处理样本不平衡，提升违约样本召回
     )
-    print(f"训练集 {X_train.shape}，测试集 {X_test.shape}")
-    print(f"训练集违约占比 {y_train.mean():.4f}，测试集违约占比 {y_test.mean():.4f}\n")
+    lr.fit(X_train, y_train)
 
-    # ===== 模型1：逻辑回归（评分卡） =====
-    # 逻辑回归对特征量纲敏感，先标准化
-    scaler = StandardScaler()
-    X_train_s = scaler.fit_transform(X_train)
-    X_test_s = scaler.transform(X_test)
+    p_lr = lr.predict_proba(X_test)[:, 1]
+    res_lr = evaluate_model("逻辑回归", y_test, p_lr)
+    results.append(res_lr)
 
-    print("===== 逻辑回归(评分卡模型) =====")
-    lr = LogisticRegression(max_iter=500, random_state=42)
-    lr.fit(X_train_s, y_train)
-    p_lr = lr.predict_proba(X_test_s)[:, 1]
+    # 保存逻辑回归模型 + 特征列表
+    joblib.dump(lr, "../models/lr_model.pkl")
+    joblib.dump(features, "../models/feature_columns.pkl")
 
-    lr_auc = roc_auc_score(y_test, p_lr)
-    lr_ks = calc_ks(y_test, p_lr)
-    print(f"AUC: {lr_auc:.4f}   KS: {lr_ks:.4f}")
-    print("混淆矩阵(阈值0.5):")
-    print(confusion_matrix(y_test, p_lr > 0.5))
-
-    # ===== 模型2：XGBoost =====
-    print("\n===== XGBoost模型 =====")
+    # =====================================================
+    # 模型 2：XGBoost
+    # =====================================================
+    print("\n===== 训练 XGBoost 模型 =====")
     xgb_clf = xgb.XGBClassifier(
         n_estimators=100,
         max_depth=4,
         learning_rate=0.1,
         random_state=42,
-
         eval_metric="logloss"
     )
     xgb_clf.fit(X_train, y_train)
+
     p_xgb = xgb_clf.predict_proba(X_test)[:, 1]
+    res_xgb = evaluate_model("XGBoost", y_test, p_xgb)
+    results.append(res_xgb)
 
-    xgb_auc = roc_auc_score(y_test, p_xgb)
-    xgb_ks = calc_ks(y_test, p_xgb)
-    print(f"AUC: {xgb_auc:.4f}   KS: {xgb_ks:.4f}")
-    print("混淆矩阵(阈值0.5):")
-    print(confusion_matrix(y_test, p_xgb > 0.5))
+    # 保存 XGBoost 模型
+    joblib.dump(xgb_clf, "../models/xgb_model.pkl")
 
-    # XGB特征重要性(Gain)
-    print("\n==== XGB特征重要性(Gain) ====")
-    gain_imp = pd.DataFrame({
-        "feature": feature_selected,
-        "gain": xgb_clf.feature_importances_
-    }).sort_values("gain", ascending=False)
-    print(gain_imp)
+    # =====================================================
+    # 模型对比汇总
+    # =====================================================
+    print("\n===== 模型对比汇总 =====")
+    result_df = pd.DataFrame(results)
+    print(result_df.to_string(index=False))
 
-    # 保存模型对比结果，供写报告用
-    result = pd.DataFrame({
-        "model": ["LogisticRegression", "XGBoost"],
-        "AUC": [lr_auc, xgb_auc],
-        "KS": [lr_ks, xgb_ks]
-    })
-    result.to_csv("../output/model_compare.csv", index=False)
-    print("\n模型对比结果已保存到 ../output/model_compare.csv")
-
-import joblib
-# 保存模型
-joblib.dump(lr, filename="lr_model.pkl")
-joblib.dump(xgb_clf, filename="xgb_model.pkl")
-print("模型保存完成")
+    result_df.to_csv("../output/model_comparison.csv", index=False)
+    print("\n模型对比结果已保存到 output/model_comparison.csv")
 
 
 

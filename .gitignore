@@ -1,53 +1,103 @@
-# Python编译缓存
+# ============================================
+# Python
+# ============================================
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-<<<<<<< HEAD
-# PyCharm IDE配置
+# ============================================
+# 虚拟环境
+# ============================================
+venv/
+env/
+ENV/
+.venv/
+.conda/
+*.conda
+
+# ============================================
+# Jupyter Notebook
+# ============================================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ============================================
+# PyCharm / VSCode / IDE
+# ============================================
 .idea/
-*.iml
-inspectionProfiles/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
 
-# 数据集
-=======
-# PyCharm IDE配置（.idea文件夹）
-.idea/
-*.iml
-misc.xml
-modules.xml
-vcs.xml
-inspectionProfiles/
-
-# 数据集、原始csv
->>>>>>> e0067179d4f54cf9f1481105185149d7170fc5b5
+# ============================================
+# 数据文件（原始数据不上传，避免仓库臃肿和泄露）
+# ============================================
 data/*.csv
 data/*.parquet
 data/*.xlsx
+data/*.xls
+data/*.json
+data/*.txt
+!data/.gitkeep
+!data/README.md
 
-<<<<<<< HEAD
-# 模型文件
-=======
-# 模型文件pkl、joblib
->>>>>>> e0067179d4f54cf9f1481105185149d7170fc5b5
-*.pkl
-*.joblib
-*.pickle
+# ============================================
+# 模型文件（本地训练生成，不上传）
+# ============================================
+models/*.pkl
+models/*.joblib
+models/*.h5
+models/*.model
+!models/.gitkeep
+!models/README.md
 
-# output文件夹保留，允许图片上传
-output/*.csv
-output/*.xlsx
-output/*.parquet
+# ============================================
+# 输出结果（图表、预测结果、评估结果等）
+# ============================================
+output/*
+!output/.gitkeep
+!output/README.md
 
+# ============================================
+# 日志与临时文件
+# ============================================
+logs/
+*.log
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# 虚拟环境
-venv/
-env/
+# ============================================
+# 环境变量与敏感信息
+# ============================================
+.env
+.env.local
+*.key
+*.pem
 
-# 系统垃圾
-.DS_Store
-<<<<<<< HEAD
+# ============================================
+# 系统文件
+# ============================================
 Thumbs.db
-=======
-Thumbs.db
->>>>>>> e0067179d4f54cf9f1481105185149d7170fc5b5
+Desktop.ini
