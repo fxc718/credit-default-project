@@ -18,7 +18,7 @@
   - 03_woe_iv_feature.py：WOE分箱、IV计算，完成特征筛选
   - 04_model_train.py：逻辑回归、XGBoost模型训练，保存模型文件
   - 05_model_evaluate.py：模型评估，计算AUC、KS、PSI特征稳定性、特征重要性
-  - 06_predict.py # 预测推理
+  - 06_predict.py ：预测推理
 
 - data/：数据集存放目录（原始数据不上传git）
 - output/：输出结果，包含指标csv（本地运行生成，图片、模型文件不上传git）
@@ -67,7 +67,7 @@ pip install -r requirements.txt
 ## 复现说明
 1. 从Kaggle下载数据集，放置到data文件夹
 2. 按顺序运行脚本：
-01_eda_analysis.py → 02_data_clean.py → 03_woe_iv_feature.py → 04_model_train.py → 05_model_evaluate.py
-3. 运行完成后，输出结果会保存在output文件夹，模型保存在eda文件夹。
+01_eda_analysis.py → 02_data_clean.py → 03_woe_iv_feature.py → 04_model_train.py → 05_model_evaluate.py 
+3. 运行完成后，输出结果会保存在output文件夹，模型保存在 models 文件夹。
 > 数据集、模型、可视化图片不会提交到Git仓库。
 ](https://github.com/fxc718/credit-default-project.git)
