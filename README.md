@@ -82,6 +82,7 @@
 安装所需python库：
 ```bash
 pip install -r requirements.txt
+```
  
 ## 复现说明
 1. 从 Kaggle 下载数据集，放置到 `data` 文件夹
